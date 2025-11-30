@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alerts - Crowd Dashboard</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/sidebar.css">
+  <style>
+    .alert-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .alert-item {
+      background: #fff3cd;
+      border: 1px solid #ffeeba;
+      padding: 12px;
+      border-radius: 8px;
+    }
+    .alert-item h3 {
+      margin: 0 0 6px 0;
+      color: #856404;
+    }
+    .alert-item p {
+      margin: 2px 0;
+    }
+  </style>
+</head>
+<body>
+
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo">
+      <img src="assets/logo.png" alt="Logo">
+      <h2>CrowdMonitor</h2>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="index.html">Dashboard</a></li>
+        <li><a href="live-feed.html">Live Feed</a></li>
+        <li><a href="heatmap.html">Heatmap</a></li>
+        <li class="active"><a href="alerts.html">Alerts</a></li>
+        <li><a href="social-trends.html">Social Trends</a></li>
+        <li><a href="predictions.html">Predictions</a></li>
+        <li><a href="contact-authority.html">Contact Authority</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+
+  <!-- Main -->
+  <main class="main-content">
+    <header class="header">
+      <h1>🚨 Active Alerts</h1>
+      <p>All alerts raised by authorities and system are shown here.</p>
+    </header>
+
+
+    <section class="alert-list" id="alertList"></section>
+  </main>
+
+
+  <script>
+    // Load alerts from localStorage
+    const alertList = document.getElementById("alertList");
+    let alerts = JSON.parse(localStorage.getItem("alerts")) || [];
+
+
+    if (alerts.length === 0) {
+      alertList.innerHTML = "<p>No active alerts 🚫</p>";
+    } else {
+      alerts.forEach(alert => {
+        const item = document.createElement("div");
+        item.className = "alert-item";
+        item.innerHTML = `
+          <h3>${alert.issue}</h3>
+          <p><strong>Message:</strong> ${alert.message}</p>
+          <p><strong>Location:</strong> ${alert.location}</p>
+          <p><strong>Time:</strong> ${alert.timestamp}</p>
+        `;
+        alertList.appendChild(item);
+      });
+    }
+  </script>
+</body>
+</html>
+

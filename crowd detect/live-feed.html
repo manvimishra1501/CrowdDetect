@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Live Crowd Feed</title>
+  <style>
+    body { font-family: Arial; text-align: center; }
+    #controls { margin-top: 10px; }
+    label { margin-right: 5px; }
+  </style>
+</head>
+<body>
+  <h1>Live Crowd Feed</h1>
+
+  <!-- Live Camera Feed with alt attribute -->
+  <img id="video" src="http://localhost:5000/video_feed" width="640" height="480" alt="Live Crowd Camera Feed">
+
+  <h2>People Count: <span id="peopleCount">0</span></h2>
+
+  <div id="controls">
+    <button onclick="startStream()">Start</button>
+    <button onclick="stopStream()">Stop</button>
+
+    <!-- Label associated with input -->
+    <label for="thresholdInput">Crowd Threshold:</label>
+    <input type="number" id="thresholdInput" placeholder="Threshold">
+
+    <button onclick="setThreshold()">Set Threshold</button>
+  </div>
+
+  <script>
+    // Update people count every second
+    async function updateCount() {
+      try {
+        const res = await fetch('http://localhost:5000/count');
+        const data = await res.json();
+        document.getElementById('peopleCount').innerText = data.peopleCount;
+      } catch (e) {}
+    }
+    setInterval(updateCount, 1000);
+
+    async function startStream() {
+      await fetch('http://localhost:5000/start_stream', { method: 'POST' });
+    }
+
+    async function stopStream() {
+      await fetch('http://localhost:5000/stop_stream', { method: 'POST' });
+    }
+
+    async function setThreshold() {
+      const t = document.getElementById('thresholdInput').value;
+      if (!t) return;
+      await fetch('http://localhost:5000/set_threshold', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ threshold: t })
+      });
+    }
+  </script>
+</body>
+</html>

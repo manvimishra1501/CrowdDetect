@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crowd Density Heatmap - Dashboard</title>
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/sidebar.css">
+  <link rel="stylesheet" href="css/widgets.css">
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <!-- Heatmap Plugin -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+  <style>
+    #map {
+      height: 550px;
+      width: 100%;
+      border-radius: 12px;
+      box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
+    }
+    .legend {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      padding: 10px 15px;
+      background: white;
+      border-radius: 8px;
+      font-size: 14px;
+      line-height: 1.5;
+      box-shadow: 0px 2px 8px rgba(0,0,0,0.2);
+    }
+    .legend span {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      margin-right: 6px;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo">
+      <a href="index.html">
+        <img src="assets/logo.png" alt="Logo">
+        <h2>CrowdMonitor</h2>
+      </a>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="index.html">Dashboard</a></li>
+        <li><a href="live-feed.html">Live Feed</a></li>
+        <li class="active"><a href="heatmap.html">Heatmap</a></li>
+        <li><a href="alerts.html">Alerts</a></li>
+        <li><a href="social-trends.html">Social Trends</a></li>
+        <li><a href="predictions.html">Predictions</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <header class="header">
+      <h1>Crowd Density Heatmap</h1>
+      <p>Monitor crowd build-up across different city zones in real-time.</p>
+    </header>
+
+    <section class="dashboard-grid">
+      <div class="widget heatmap-widget">
+        <h2>Density Map</h2>
+        <div id="map"></div>
+        <p class="map-note">Zoom in to see individual crowd markers. Hover on hotspots to identify density.</p>
+        <button onclick="window.location.href='live-feed.html'">⬅ Back to Live Feed</button>
+      </div>
+    </section>
+  </main>
+
+<script>
+  // Initialize the map at a specific location
+  var map = L.map('map').setView([28.6139, 77.2090], 14); // Center Delhi
+
+  // Add OpenStreetMap tiles
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+
+  // Example crowd points (latitude, longitude, intensity)
+  var heatPoints = [
+    [28.6139, 77.2090, 1.0],
+    [28.6145, 77.2100, 0.8],
+    [28.6150, 77.2085, 0.9],
+    [28.6160, 77.2070, 0.7],
+    [28.6170, 77.2060, 0.6],
+    [28.6185, 77.2120, 1.0],
+    [28.6190, 77.2140, 0.9],
+    [28.6120, 77.2105, 0.8],
+    [28.6110, 77.2080, 0.6],
+    [28.6200, 77.2150, 1.0]
+  ];
+
+  // Heatmap with better gradient
+  L.heatLayer(heatPoints, {
+    radius: 40,         // size of each point "influence"
+    blur: 30,           // smoothness
+    maxZoom: 17,
+    gradient: {
+      0.2: 'blue',
+      0.4: 'lime',
+      0.6: 'yellow',
+      0.8: 'orange',
+      1.0: 'red'
+    }
+  }).addTo(map);
+</script>
+
+</body>
+</html>

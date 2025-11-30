@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Social Media Trends - Dashboard</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/header.css">
+  <link rel="stylesheet" href="css/sidebar.css">
+  <link rel="stylesheet" href="css/widgets.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo">
+      <img src="assets/logo.png" alt="Logo">
+      <h2>CrowdMonitor</h2>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="index.html">Dashboard</a></li>
+        <li><a href="live-feed.html">Live Feed</a></li>
+        <li><a href="heatmap.html">Heatmap</a></li>
+        <li><a href="alerts.html">Alerts</a></li>
+        <li class="active"><a href="social-trends.html">Social Trends</a></li>
+        <li><a href="predictions.html">Predictions</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <header class="header">
+      <h1>Social Media Trends</h1>
+    </header>
+
+    <section class="dashboard-grid">
+      <!-- Trending Hashtags Card -->
+      <div class="widget social-widget">
+        <h2>Trending Hashtags</h2>
+        <ul id="hashtagsList">
+          <!-- Dynamic hashtags added via JS -->
+        </ul>
+      </div>
+
+      <!-- Keyword Spike Chart -->
+      <div class="widget social-widget">
+        <h2>Keyword Spike Graph</h2>
+        <canvas id="keywordChart" height="200"></canvas>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/social-trends.js"></script>
+</body>
+</html>

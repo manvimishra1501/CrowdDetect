@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crowd Risk Prediction</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+    /* Reset & base */
+    * { box-sizing: border-box; margin:0; padding:0; font-family: 'Inter', sans-serif; }
+    body { background: #f5f6fa; color: #333; }
+
+    /* Sidebar */
+    .sidebar {
+        width: 220px;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: 0;
+        background: #2f3640;
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        padding-top: 20px;
+    }
+    .sidebar .logo { text-align: center; margin-bottom: 30px; }
+    .sidebar .logo img { width: 60px; height: 60px; margin-bottom: 10px; }
+    .sidebar .logo h3 { font-weight: 700; }
+    .sidebar nav ul { list-style: none; padding-left: 0; }
+    .sidebar nav ul li {
+        padding: 15px 20px;
+        cursor: pointer;
+        transition: 0.2s;
+        border-left: 4px solid transparent;
+    }
+    .sidebar nav ul li.active, .sidebar nav ul li:hover {
+        background: #414b57;
+        border-left: 4px solid #00a8ff;
+    }
+.sidebar nav ul li a {
+    color: inherit;        /* keeps text color same as li */
+    text-decoration: none; /* removes underline */
+    display: block;        /* fills the li area */
+    width: 100%;
+}
+
+.sidebar nav ul li a:hover {
+    color: inherit;        /* hover text color same as before */
+}
+
+    /* Main content */
+    .main-content {
+        margin-left: 220px;
+        padding: 20px 30px;
+    }
+    .header h1 { font-size: 2rem; margin-bottom: 20px; }
+    .dashboard-grid { display: grid; grid-template-columns: 1fr; gap: 25px; }
+
+    /* Widgets */
+    .widget {
+        background: #fff;
+        border-radius: 12px;
+        padding: 25px 20px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        transition: transform 0.2s;
+    }
+    .widget h2 { font-size: 1.5rem; margin-bottom: 15px; color: #00a8ff; }
+
+    /* Section containers */
+    .form-section {
+        background: #f0f4f8;
+        padding: 15px 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        border-left: 4px solid #00a8ff;
+    }
+    .form-section h3 {
+        margin-bottom: 10px;
+        color: #2f3640;
+        font-size: 1.1rem;
+    }
+
+    /* Form styles */
+    form label { display: block; margin: 8px 0 4px; font-weight: 600; }
+    form select, form input {
+        width: 100%;
+        padding: 8px 10px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        margin-bottom: 12px;
+        font-size: 0.95rem;
+        transition: 0.2s;
+    }
+    form select:focus, form input:focus {
+        outline: none;
+        border-color: #00a8ff;
+        box-shadow: 0 0 5px rgba(0,168,255,0.3);
+    }
+
+    button#predictBtn {
+        margin-top: 15px;
+        padding: 12px 20px;
+        border: none;
+        background: #00a8ff;
+        color: #fff;
+        border-radius: 8px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+    button#predictBtn:hover { background: #0088cc; }
+
+    /* Result display */
+    #result {
+        margin-top: 20px;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #e84118;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+        .main-content { margin-left: 0; padding: 15px; }
+        .dashboard-grid { grid-template-columns: 1fr; }
+    }
+</style>
+
+</head>
+<body>
+    <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="logo">
+        <img src="logo.png" alt="Logo">
+        <h3>Crowd System</h3>
+    </div>
+    <nav>
+        <ul>
+            <li class="active"><a href="index.html">Dashboard</a></li>
+            <li><a href="live-feed.html">Live Feed</a></li>
+            <li><a href="help-support.html">Help & Support</a></li>
+            <li><a href="alerts.html">Alerts</a></li>
+            <li><a href="settings.html">Settings</a></li>
+        </ul>
+    </nav>
+</div>
+
+
+    <!-- Main content -->
+    <div class="main-content">
+        <header class="header">
+            <h1>Crowd Risk Prediction</h1>
+        </header>
+
+       
+
+            <!-- Risk Prediction Form Widget -->
+           <div class="widget card-widget">
+    <h2>Risk Prediction Form</h2>
+    <form id="riskForm">
+
+        <!-- A. Event Details -->
+        <div class="form-section">
+            <h3>A. Event Details</h3>
+
+            <label for="event_type">Event Type:</label>
+            <select id="event_type">
+                <option value="Political">Political</option>
+                <option value="Religious">Religious</option>
+                <option value="Sports">Sports</option>
+                <option value="Cultural">Cultural</option>
+                <option value="Other">Other</option>
+            </select>
+
+            <label for="event_scale">Event Scale:</label>
+            <select id="event_scale">
+                <option value="Local">Local</option>
+                <option value="Regional">Regional</option>
+                <option value="National">National</option>
+                <option value="International">International</option>
+            </select>
+
+            <label for="event_duration">Event Duration:</label>
+            <select id="event_duration">
+                <option value="<4 hr">&lt;4 hr</option>
+                <option value="Half-day">Half-day</option>
+                <option value="Full-day">Full-day</option>
+                <option value="Multiple days">Multiple days</option>
+            </select>
+
+            <label for="event_timing">Event Timing:</label>
+            <select id="event_timing">
+                <option value="Morning">Morning</option>
+                <option value="Afternoon">Afternoon</option>
+                <option value="Evening">Evening</option>
+                <option value="Night">Night</option>
+            </select>
+        </div>
+
+        <!-- B. Location / Venue Details -->
+        <div class="form-section">
+            <h3>B. Location / Venue Details</h3>
+
+            <label for="city_name">City / Town Name:</label>
+            <input type="text" id="city_name" placeholder="Enter city or town">
+
+            <label for="venue_type">Venue Type:</label>
+            <select id="venue_type">
+                <option value="Open ground">Open ground</option>
+                <option value="Stadium">Stadium</option>
+                <option value="Street">Street</option>
+                <option value="Temple">Temple</option>
+                <option value="Other">Other</option>
+            </select>
+
+            <label for="venue_capacity">Venue Capacity:</label>
+            <select id="venue_capacity">
+                <option value="<1000">&lt;1000</option>
+                <option value="1000-5000">1000–5000</option>
+                <option value="5000-20000">5000–20,000</option>
+                <option value="20000+">20,000+</option>
+            </select>
+
+            <label for="entry_points">Number of Entry/Exit Points:</label>
+            <select id="entry_points">
+                <option value="1">1</option>
+                <option value="2-3">2–3</option>
+                <option value="4-5">4–5</option>
+                <option value="5+">5+</option>
+            </select>
+
+            <label for="road_width">Road Width / Access:</label>
+            <select id="road_width">
+                <option value="Narrow">Narrow</option>
+                <option value="Medium">Medium</option>
+                <option value="Wide">Wide</option>
+                <option value="Highway">Highway</option>
+            </select>
+
+            <label for="public_transport">Nearby Public Transport Options:</label>
+            <select id="public_transport">
+                <option value="None">None</option>
+                <option value="Few">Few (1–2)</option>
+                <option value="Several">Several (3–5)</option>
+                <option value="Excellent">Excellent (5+)</option>
+            </select>
+        </div>
+
+        <!-- C. Public Awareness & Participation -->
+        <div class="form-section">
+            <h3>C. Public Awareness & Participation</h3>
+
+            <label for="social_media_buzz">Social Media Buzz:</label>
+            <select id="social_media_buzz">
+                <option value="None">None</option>
+                <option value="Low">Low</option>
+                <option value="Medium">Medium</option>
+                <option value="High">High</option>
+                <option value="Viral">Viral</option>
+            </select>
+
+            <label for="media_coverage">Media Coverage:</label>
+            <select id="media_coverage">
+                <option value="None">None</option>
+                <option value="Local">Local</option>
+                <option value="Regional">Regional</option>
+                <option value="National">National</option>
+            </select>
+
+            <label for="ticketing">Ticketing / Registration Availability:</label>
+            <select id="ticketing">
+                <option value="None">None</option>
+                <option value="Limited">Limited</option>
+                <option value="Open">Open</option>
+            </select>
+        </div>
+
+        <!-- D. Safety & Historical Risk Factors -->
+        <div class="form-section">
+            <h3>D. Safety & Historical Risk Factors</h3>
+
+            <label for="past_events">Similar Past Events in Same Location:</label>
+            <select id="past_events">
+                <option value="None">None</option>
+                <option value="Minor incidents">Minor incidents</option>
+                <option value="Major incidents">Major incidents</option>
+            </select>
+
+            <label for="seasonal_factors">Seasonal / Weather Factors:</label>
+            <select id="seasonal_factors">
+                <option value="Normal">Normal</option>
+                <option value="Rain">Rain</option>
+                <option value="Heatwave">Heatwave</option>
+                <option value="Cold">Cold</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+
+        <button type="button" id="predictBtn">Predict Risk</button>
+    </form>
+
+    <div class="people-count" id="result" style="margin-top:15px; font-size:1.2rem;"></div>
+</div>
+
+
+<script>
+    // Improved Weights for all options
+    const weights = {
+        event_type: { Political: 20, Religious: 15, Sports: 18, Cultural: 10, Other: 5 },
+        event_scale: { Local: 5, Regional: 10, National: 15, International: 20 },
+        event_duration: { "<4 hr": 5, "Half-day": 10, "Full-day": 15, "Multiple days": 20 },
+        event_timing: { Morning: 5, Afternoon: 7, Evening: 12, Night: 10 },
+
+        venue_type: { "Open ground": 15, Stadium: 12, Street: 10, Temple: 8, Other: 5 },
+        venue_capacity: { "<1000": 20, "1000–5000": 15, "5000–20,000": 10, "20,000+": 5 },
+        entry_points: { "1": 20, "2–3": 15, "4–5": 10, "5+": 5 },
+        road_width: { Narrow: 15, Medium: 10, Wide: 5, Highway: 2 },
+        public_transport: { None: 15, "Few": 10, "Several": 5, "Excellent": 2 },
+
+        social_media_buzz: { None: 0, Low: 5, Medium: 10, High: 15, Viral: 20 },
+        media_coverage: { None: 0, Local: 5, Regional: 10, National: 20 },
+        ticketing: { None: 15, Limited: 10, Open: 5 },
+
+        past_events: { None: 0, "Minor incidents": 10, "Major incidents": 20 },
+        seasonal_factors: { Normal: 0, Rain: 8, Heatwave: 12, Cold: 8, Other: 5 }
+    };
+
+    // Multipliers for combined risk factors
+    function combinedMultiplier(formData) {
+        let multiplier = 1;
+
+        // Big event with small entry points increases risk
+        if ((formData.venue_capacity === "5000–20,000" || formData.venue_capacity === "20,000+") &&
+            (formData.entry_points === "1" || formData.entry_points === "2–3")) {
+            multiplier += 0.15;
+        }
+
+        // High social media buzz + national/international scale
+        if ((formData.social_media_buzz === "High" || formData.social_media_buzz === "Viral") &&
+            (formData.event_scale === "National" || formData.event_scale === "International")) {
+            multiplier += 0.1;
+        }
+
+        // Night event on narrow roads
+        if (formData.event_timing === "Night" && formData.road_width === "Narrow") {
+            multiplier += 0.1;
+        }
+
+        return multiplier;
+    }
+
+    function calculateRisk(formData) {
+        let total = 0;
+
+        for (let key in formData) {
+            const value = formData[key];
+            if (weights[key] && weights[key][value] !== undefined) {
+                total += weights[key][value];
+            }
+        }
+
+        // Apply combined multipliers
+        total *= combinedMultiplier(formData);
+
+        // Normalize to 0-100
+        const maxScore = 20+20+20+12 + 15+20+20+15+15 + 20+15+15 + 20+12; // sum of max weights + rough estimate of combined multipliers
+        let risk = Math.round((total / maxScore) * 100);
+        if (risk > 100) risk = 100; // cap at 100
+        return risk;
+    }
+
+    async function submitForm() {
+        const formData = {
+            event_type: document.getElementById('event_type').value,
+            event_scale: document.getElementById('event_scale').value,
+            event_duration: document.getElementById('event_duration').value,
+            event_timing: document.getElementById('event_timing').value,
+            city_name: document.getElementById('city_name').value, // still optional, could be added to multiplier later
+            venue_type: document.getElementById('venue_type').value,
+            venue_capacity: document.getElementById('venue_capacity').value,
+            entry_points: document.getElementById('entry_points').value,
+            road_width: document.getElementById('road_width').value,
+            public_transport: document.getElementById('public_transport').value,
+            social_media_buzz: document.getElementById('social_media_buzz').value,
+            media_coverage: document.getElementById('media_coverage').value,
+            ticketing: document.getElementById('ticketing').value,
+            past_events: document.getElementById('past_events').value,
+            seasonal_factors: document.getElementById('seasonal_factors').value
+        };
+
+        const risk = calculateRisk(formData);
+        document.getElementById('result').innerText = "Predicted Crowd Risk Level: " + risk + "/100";
+    }
+
+    document.getElementById('predictBtn').addEventListener('click', submitForm);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Nearest Authority - Crowd Dashboard</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/header.css">
+  <link rel="stylesheet" href="css/sidebar.css">
+  <link rel="stylesheet" href="css/widgets.css">
+  
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+  <style>
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .contact-form input, .contact-form select, .contact-form textarea {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+      width: 100%;
+    }
+    .contact-form button {
+      background: #007bff;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    .contact-form button:hover {
+      background: #0056b3;
+    }
+    #map {
+      height: 300px;
+      border-radius: 10px;
+      margin-top: 10px;
+    }
+    .success-msg {
+      margin-top: 15px;
+      padding: 10px;
+      background: #28a745;
+      color: white;
+      border-radius: 8px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar">
+    <div class="logo">
+      <img src="logo.jpg" alt="Logo">
+      <h2>CrowdMonitor</h2>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="live-feed.html">Live Feed</a></li>
+        <li><a href="heatmap.html">Heatmap</a></li>
+        <li><a href="alerts.html">Alerts</a></li>
+        <li><a href="social-trends.html">Social Trends</a></li>
+        <li><a href="predictions.html">Predictions</a></li>
+        <li class="active"><a href="contact-authority.html">Contact Authority</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <header class="header">
+      <h1>🚨 Contact Nearest Authority</h1>
+      <p>Send an urgent alert with your current location in case of crowd upsurge.</p>
+    </header>
+
+    <section class="dashboard-grid">
+      <div class="widget">
+        <h2>Emergency Alert Form</h2>
+        
+        <form class="contact-form" id="alertForm">
+          <label for="issue">Type of Issue</label>
+          <select id="issue" required>
+            <option value="">--Select Issue--</option>
+            <option value="Crowd Surge">Crowd Surge</option>
+            <option value="Stampede Risk">Stampede Risk</option>
+            <option value="Traffic Blockage">Traffic Blockage</option>
+            <option value="Medical Emergency">Medical Emergency</option>
+          </select>
+
+          <label for="message">Additional Message</label>
+          <textarea id="message" rows="3" placeholder="Describe the situation..."></textarea>
+
+          <label for="location">Your Location (Auto-detected)</label>
+          <input type="text" id="location" readonly placeholder="Fetching location...">
+
+          <div id="map"></div>
+
+          <button type="submit">🚨 Send Alert</button>
+        </form>
+
+        <div class="success-msg" id="successMsg">✅ Alert sent successfully to nearest authority!</div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const locationInput = document.getElementById("location");
+    const successMsg = document.getElementById("successMsg");
+    let userLat = null, userLng = null;
+    let map, marker;
+
+    // Initialize map
+    map = L.map('map').setView([28.6139, 77.2090], 13); // Default: Delhi
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Get user location
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((pos) => {
+        userLat = pos.coords.latitude;
+        userLng = pos.coords.longitude;
+        locationInput.value = `${userLat.toFixed(5)}, ${userLng.toFixed(5)}`;
+        map.setView([userLat, userLng], 15);
+        marker = L.marker([userLat, userLng]).addTo(map)
+                 .bindPopup("You are here").openPopup();
+      }, () => {
+        locationInput.value = "Location access denied.";
+      });
+    } else {
+      locationInput.value = "Geolocation not supported.";
+    }
+
+    // Handle form submission
+    document.getElementById("alertForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const issue = document.getElementById("issue").value;
+      const message = document.getElementById("message").value || "No additional details";
+      const locationVal = document.getElementById("location").value;
+      const timestamp = new Date().toLocaleString();
+
+      const newAlert = { issue, message, location: locationVal, timestamp };
+
+      // Save alert in localStorage
+      let alerts = JSON.parse(localStorage.getItem("alerts")) || [];
+      alerts.push(newAlert);
+      localStorage.setItem("alerts", JSON.stringify(alerts));
+
+      // Show success message
+      successMsg.style.display = "block";
+
+      setTimeout(() => {
+        successMsg.style.display = "none";
+        document.getElementById("alertForm").reset();
+        if (marker) marker.remove();
+      }, 4000);
+    });
+  </script>
+</body>
+</html>
